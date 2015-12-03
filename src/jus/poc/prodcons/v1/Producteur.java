@@ -68,15 +68,13 @@ public class Producteur extends Acteur implements _Producteur {
 	public void run()
 	{
 		//Tant qu'il reste des messages a produire : on les produits et on les deposes sur la memoire tampon
-		while(nombreDeMessages() != 0 && !tampon.isPlein())
+		while(nombreDeMessages() != 0)
 		{
 			try {
-				sleep(10*alea.next());
 				Message msg = new MessageX(identification(),nbMessageDepose);
 				if(impression == 1){
 					System.out.println("Producteur_Creation : "+super.identification() + " produit " +msg);
 				}
-				sleep(10*alea.next());
 				tampon.put(this, msg);
 				nbMessageDepose++; 
 				if(impression == 1){

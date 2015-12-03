@@ -46,11 +46,8 @@ public class Consommateur extends Acteur implements _Consommateur {
 	 */
 	public void run()
 	{
-		while(!tampon.isVide())
-		{
 			try {
 				//Le consommateur recupere le message depuis le tampon et l'affiche
-				sleep(10*alea.next());
 				Message msg = tampon.get(this);
 				if (impression == 1){
 					System.out.println("Consommateur_Retrait : "+ super.identification() + " recupere "+msg);
@@ -65,11 +62,14 @@ public class Consommateur extends Acteur implements _Consommateur {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		if(impression == 1){
-			System.out.println("STOP : consommateur : " + this.identification());
-		}
+
+
 	}
+	
+	
+	
+	
+	
 
 	
 

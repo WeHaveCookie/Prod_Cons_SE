@@ -7,10 +7,10 @@ import jus.poc.prodcons._Producteur;
 
 public class ProdCons implements Tampon {
 
-	private Message[] msg; //tableau de messages = buffer (memoire tampon)
+	private Message[] buffer; //tableau de messages = buffer (memoire tampon)
 	private int in; //indique l'indice de la premiere case vide du tableau (dans laquelle on peut ecrire un message)
 	private int out; //indique l'indice de la premiere case pleinne du tableau (dans laquelle on peut recuperer un message)
-	private int nbMsg; //nombre de messages dans le tableau
+	private int nbCasePleine;
 	private int impression;
 
 	
@@ -19,43 +19,44 @@ public class ProdCons implements Tampon {
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 */
 	public ProdCons(int taille, int impression) {
-		this.msg = new Message[taille];
+		this.buffer = new Message[taille];
 		this.impression = impression;
 		this.in = 0;
 		this.out = 0;
-		this.nbMsg = 0;
+		this.nbCasePleine = 0;
 	}
 
-	/** Nombre de messages en attente dans la memoire tampon
+	/** Nombre de messages en attente dans la memoire tampon (nombre de case pleinne dans le buffer)
 	 */
 	@Override
 	public int enAttente() {
-		return nbMsg;
+		return nbCasePleine;
 	}
 	
 	/** Taille de la memoire tampon
 	 */
 	@Override
 	public int taille() {
-		return msg.length;
+		return buffer.length;
 	}
 
 	/** Test si la memoire tampon est pleinne
 	 */
 	public boolean isPlein() {
-		return nbMsg == taille();
+		return nbCasePleine == taille();
 	}
 	
 	/** Test si la memoire tampon est vide
 	 */
 	public boolean isVide()
 	{
-		return nbMsg == 0;
+		return nbCasePleine == 0;
 	}
 
-	
+	/** Set le nombre de case pleine dans le buffer
+	 */
 	public void setnbMsg(int nb){
-		nbMsg = nb;
+		nbCasePleine = nb;
 	}
 	
 	
@@ -67,23 +68,13 @@ public class ProdCons implements Tampon {
 	@Override
 	public synchronized void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		//Tant que le tampon est plein, on attend puisque l'on ne peut rien deposer
-		while(isPlein()) {
+		while(nbCasePleine==taille()) {
 			wait();
 		}
-		//Si le tampon n'est pas plein, on depose le message dans la premiere case vide du tableau, et on met a jours l'indice in et le nbMsg
-		
-		//if(!(((Producteur)arg0).verif())){
-		//	TestProdCons.producteurAlive--;
-		//	if(impression == 1){
-		//		System.out.println("producteurAlive : "+TestProdCons.producteurAlive);
-		//	}
-		//}
-		
-		msg[in] = arg1;
+		buffer[in] = arg1;
 		in = (in + 1) % taille();
-		nbMsg++;
-		//Notification a tous les threads
-		notifyAll();
+		nbCasePleine++;
+		notifyAll();  //Notification a tous les threads
 	}
 
 	
@@ -92,15 +83,14 @@ public class ProdCons implements Tampon {
 	@Override
 	public synchronized Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		//Tant que le tampon est vide, on attend puisque l'on ne peut rien recuperer
-		while(isVide()) {
+		while(nbCasePleine == 0) {
 			wait();
 		}
-		//Si le tampon n'est pas vide, on recupere le premier message du tableau, et on met a jours l'indice out et le nbMsg
-		Message m = msg[out];
+		//Si le tampon n'est pas vide, on recupere le premier message du tableau, et on met a jours l'indice out
+		Message m = buffer[out];
 		out = (out + 1) % taille();
-		nbMsg--;
-		//Notification à tous les threads
-		notifyAll();
+		nbCasePleine--;
+		notifyAll(); //Notification à tous les threads
 		return m;
 	}
 

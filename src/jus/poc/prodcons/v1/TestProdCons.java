@@ -16,8 +16,6 @@ import jus.poc.prodcons._Producteur;
 
 public class TestProdCons extends Simulateur {
 
-	public static int producteurAlive;
-	public static int consommateurAlive;
 	public int nbProd;
 	public int nbCons;
 	public int nbBuffer;
@@ -68,30 +66,32 @@ public class TestProdCons extends Simulateur {
 	@Override
 	protected void run() throws Exception{
 		this.init("src/jus/poc/prodcons/options/options1.xml");
-		producteurAlive = nbProd;
-		consommateurAlive = nbCons;
+		//this.nbProd = nbProd;
+		//this.nbCons = nbCons;
 		ProdCons buffer = new ProdCons(nbBuffer, impression);
 		int i=0;
-		Aleatoire aleaCons = new TirageAlea(tempsMoyenConsommation,deviationTempsMoyenConsommation);
-		Aleatoire aleaTempsProd = new TirageAlea(tempsMoyenProduction, deviationTempsMoyenProduction);
-		Aleatoire aleaNbreAProduire = new TirageAlea(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
+		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
+		Aleatoire aleaTempsProd = new Aleatoire(tempsMoyenProduction, deviationTempsMoyenProduction);
+		Aleatoire aleaNbreAProduire = new Aleatoire(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
 
-		for(i=0;i<nbProd;i++) {
+		while(this.nbProd>0) {
 			Producteur p = new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
-			producteurs.put(p.identification(), p);
-			p.start();
+			//producteurs.put(p.identification(), p);
 			if(impression == 1){
 				System.out.println("Init : producteur : " + p.identification() + " -> NbrAProduire : " + p.GetNbMsg());
 			}
+			p.start();
+			this.nbProd--;
 		}
 		
-		for(i=0;i<nbCons;i++) {
+		while(this.nbCons>0) {
 			Consommateur c = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
-			consommateurs.put(c.identification(), c);
-			c.start();
+			//consommateurs.put(c.identification(), c);
 			if(impression == 1){
 				System.out.println("Init : consommateur : " + c.identification());
 			}
+			c.start();
+			this.nbCons--;
 		}
 
 	}
