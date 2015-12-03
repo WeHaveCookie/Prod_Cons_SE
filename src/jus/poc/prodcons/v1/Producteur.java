@@ -13,7 +13,7 @@ import jus.poc.prodcons._Producteur;
 //Threads producteurs
 public class Producteur extends Acteur implements _Producteur {
 
-	private Tampon tampon; //tampon sur lequel on depose les messages
+	private ProdCons tampon; //tampon sur lequel on depose les messages
 	private int nbMessage; //nombre total de message que le producteur doit produire et deposer
 	private int nbMessageDepose; //nombre de message que le producteur a deja depose
 	private Aleatoire alea; //variable aleatoire permettant de simuler un delais de traitement
@@ -30,18 +30,13 @@ public class Producteur extends Acteur implements _Producteur {
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 * @throws ControlException
 	 */
-	public Producteur(Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, int nbMessage, Tampon tampon, Aleatoire alea, int impression) throws ControlException {
+	public Producteur(Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, int nbMessage, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.tampon = tampon;
 		this.nbMessageDepose = 0;
 		this.nbMessage = nbMessage;
 		this.alea = alea;
 		this.impression = impression;
-	}
-
-	
-	public int GetNbMsg(){
-		return nbMessage;
 	}
 	
 	
@@ -62,13 +57,18 @@ public class Producteur extends Acteur implements _Producteur {
 	}
 
 	
+	public int GetNbMsg(){
+		return nbMessage;
+	}
+	
+	
 	/** Méthode permettant de produire un message et de le deposer dans la memoire tampon
 	 * 
 	 */
 	public void run()
 	{
 		//Tant qu'il reste des messages a produire : on les produits et on les deposes sur la memoire tampon
-		while(nombreDeMessages() != 0)
+		while(nombreDeMessages() != 0 && !tampon.isPlein())
 		{
 			try {
 				sleep(10*alea.next());

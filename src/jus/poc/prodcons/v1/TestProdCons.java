@@ -16,8 +16,8 @@ import jus.poc.prodcons._Producteur;
 
 public class TestProdCons extends Simulateur {
 
-	public static int producteurAlive; //
-	public static int consommateurAlive; //
+	public static int producteurAlive;
+	public static int consommateurAlive;
 	public int nbProd;
 	public int nbCons;
 	public int nbBuffer;
@@ -70,21 +70,12 @@ public class TestProdCons extends Simulateur {
 		this.init("src/jus/poc/prodcons/options/options1.xml");
 		producteurAlive = nbProd;
 		consommateurAlive = nbCons;
-		Tampon buffer = new ProdCons(nbBuffer, impression);
+		ProdCons buffer = new ProdCons(nbBuffer, impression);
 		int i=0;
 		Aleatoire aleaCons = new TirageAlea(tempsMoyenConsommation,deviationTempsMoyenConsommation);
 		Aleatoire aleaTempsProd = new TirageAlea(tempsMoyenProduction, deviationTempsMoyenProduction);
 		Aleatoire aleaNbreAProduire = new TirageAlea(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
-		Aleatoire aleaNbreAConsommer = new TirageAlea(nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
 
-		for(i=0;i<nbCons;i++) {
-			Consommateur c = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, aleaNbreAConsommer.next(), buffer, aleaCons, impression);
-			consommateurs.put(c.identification(), c);
-			c.start();
-			if(impression == 1){
-				System.out.println("Init : consommateur : " + c.identification() + " ->  NbrAConsommer : " + c.GetNbMsg());
-			}
-		}
 		for(i=0;i<nbProd;i++) {
 			Producteur p = new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
 			producteurs.put(p.identification(), p);
@@ -93,6 +84,16 @@ public class TestProdCons extends Simulateur {
 				System.out.println("Init : producteur : " + p.identification() + " -> NbrAProduire : " + p.GetNbMsg());
 			}
 		}
+		
+		for(i=0;i<nbCons;i++) {
+			Consommateur c = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
+			consommateurs.put(c.identification(), c);
+			c.start();
+			if(impression == 1){
+				System.out.println("Init : consommateur : " + c.identification());
+			}
+		}
+
 	}
 
 

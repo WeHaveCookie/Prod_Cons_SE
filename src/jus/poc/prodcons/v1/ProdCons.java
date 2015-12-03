@@ -42,17 +42,24 @@ public class ProdCons implements Tampon {
 
 	/** Test si la memoire tampon est pleinne
 	 */
-	private boolean isPlein() {
+	public boolean isPlein() {
 		return nbMsg == taille();
 	}
 	
 	/** Test si la memoire tampon est vide
 	 */
-	private boolean isVide()
+	public boolean isVide()
 	{
 		return nbMsg == 0;
 	}
 
+	
+	public void setnbMsg(int nb){
+		nbMsg = nb;
+	}
+	
+	
+	
 	
 	/** Deposer un message sur la memoire tampon
 	 * 
