@@ -3,14 +3,11 @@ package jus.poc.prodcons.v2;
 public class Semaphore {
 
 	
-	
 	private int residu;
 
 	public Semaphore(int initialisation) {
 		residu = initialisation;
 	}
-
-	
 	
 	
 	/** Methode ATTENDRE

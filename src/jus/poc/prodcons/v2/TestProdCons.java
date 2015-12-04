@@ -16,6 +16,8 @@ import jus.poc.prodcons._Producteur;
 
 public class TestProdCons extends Simulateur {
 
+	public static int nbProdAlive;
+	
 	public int nbProd;
 	public int nbCons;
 	public int nbBuffer;
@@ -28,8 +30,7 @@ public class TestProdCons extends Simulateur {
 	public int nombreMoyenNbExemplaire;
 	public int deviationNombreMoyenNbExemplaire;
 	public int impression; // Pour inhiber les impressions réalisées par le programme, il faut mettre le flag impression à 0 dans le fichier xml
-	private HashMap<Integer, _Consommateur> consommateurs = new HashMap<Integer, _Consommateur>();
-	private HashMap<Integer, _Producteur> producteurs = new HashMap<Integer, _Producteur>();
+
 
 	
 	/** Constructor TestProdCons
@@ -66,8 +67,7 @@ public class TestProdCons extends Simulateur {
 	@Override
 	protected void run() throws Exception{
 		this.init("src/jus/poc/prodcons/options/options1.xml");
-		//this.nbProd = nbProd;
-		//this.nbCons = nbCons;
+		nbProdAlive = nbProd;
 		ProdCons buffer = new ProdCons(nbBuffer, impression);
 		int i=0;
 		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
@@ -76,7 +76,6 @@ public class TestProdCons extends Simulateur {
 
 		while(this.nbProd>0) {
 			Producteur p = new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
-			//producteurs.put(p.identification(), p);
 			if(impression == 1){
 				System.out.println("Init : producteur : " + p.identification() + " -> NbrAProduire : " + p.GetNbMsg());
 			}
@@ -86,7 +85,6 @@ public class TestProdCons extends Simulateur {
 		
 		while(this.nbCons>0) {
 			Consommateur c = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
-			//consommateurs.put(c.identification(), c);
 			if(impression == 1){
 				System.out.println("Init : consommateur : " + c.identification());
 			}

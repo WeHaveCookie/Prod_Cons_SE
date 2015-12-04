@@ -7,6 +7,7 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.v1.TestProdCons;
 
 
 
@@ -86,6 +87,11 @@ public class Producteur extends Acteur implements _Producteur {
 		}
 		if(impression == 1){
 			System.out.println("STOP : producteur : " + this.identification());
+		}
+		TestProdCons.nbProdAlive--;
+		if(impression == 1){
+			System.out.println("Producteur_Alive : " + TestProdCons.nbProdAlive);
+			System.out.println("NbMsgBuffer : "+ tampon.enAttente());
 		}
 
 	}

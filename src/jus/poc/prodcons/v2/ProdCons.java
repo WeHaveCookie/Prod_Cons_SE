@@ -13,8 +13,10 @@ public class ProdCons implements Tampon {
 	private int nbCasePleine;
 	private int impression;
 	
-	private Semaphore consoLibre;
-	private Semaphore prodLibre;
+	private Semaphore FileCons;
+	private Semaphore FileProd;
+	private Semaphore mutexP;
+	private Semaphore mutexC;
 
 	
 	/** Constructor ProdCons
@@ -28,8 +30,10 @@ public class ProdCons implements Tampon {
 		this.out = 0;
 		this.nbCasePleine = 0;
 		
-		consoLibre = new Semaphore(0);
-		prodLibre = new Semaphore(taille);
+		FileCons = new Semaphore(0);
+		FileProd = new Semaphore(taille);
+		mutexP = new Semaphore(1);
+		mutexC = new Semaphore(1);
 	}
 
 	/** Nombre de messages en attente dans la memoire tampon (nombre de case pleinne dans le buffer)
@@ -73,11 +77,13 @@ public class ProdCons implements Tampon {
 	 */
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
-		prodLibre.p(); // Attendre
+		FileProd.p(); //File d'attente des producteurs
+		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
 		buffer[in] = arg1;
 		in = (in + 1) % taille();
 		nbCasePleine++;
-		consoLibre.v(); //Notify les consommateurs
+		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
+		FileCons.v(); //Permet de notifier les consommateurs qu'un message à été déposé
 	}
 
 	
@@ -85,11 +91,13 @@ public class ProdCons implements Tampon {
 	 */
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
-		consoLibre.p();
+		FileCons.p(); //File d'attente des consommateurs
+		mutexC.p(); // Permet l'acces unique d'un consommateur au buffer
 		Message m = buffer[out];
 		out = (out + 1) % taille();
 		nbCasePleine--;
-		prodLibre.v(); //Notify aux producteurs
+		mutexC.v(); // Debloque l'accès au buffer
+		FileProd.v(); //Permet de notifier les producteurs qu'une case est libérée
 		return m;
 	}
 	
