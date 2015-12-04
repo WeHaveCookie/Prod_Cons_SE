@@ -46,6 +46,9 @@ public class Consommateur extends Acteur implements _Consommateur {
 	 */
 	public void run()
 	{
+		
+		while(TestProdCons.nbProdAlive > 0 || !tampon.isVide())
+		{
 			try {
 				//Le consommateur recupere le message depuis le tampon et l'affiche
 				Message msg = tampon.get(this);
@@ -53,15 +56,15 @@ public class Consommateur extends Acteur implements _Consommateur {
 					System.out.println("Consommateur_Retrait : "+ super.identification() + " recupere "+msg);
 				}
 				//On incremente alors le nombre de message retire et on simule un delais de traitement
-				nbMessageRetire++;
-				tampon.setnbMsg(tampon.enAttente() - 1);
 				if (impression == 1){
 					System.out.println("Consommateur_Traitement : "+ super.identification() + " effectue le traitement sur "+msg);
 				}
+				sleep(100*alea.next());
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
 
 
 	}
