@@ -31,8 +31,7 @@ public class TestProdCons extends Simulateur {
 	public int nombreMoyenNbExemplaire;
 	public int deviationNombreMoyenNbExemplaire;
 	public int impression; // Pour inhiber les impressions réalisées par le programme, il faut mettre le flag impression à 0 dans le fichier xml
-	private HashMap<Integer, Consommateur> consommateurs = new HashMap<Integer, Consommateur>();
-	//private HashMap<Integer, Producteur> producteurs = new HashMap<Integer, Producteur>();
+
 
 	
 	/** Constructor TestProdCons

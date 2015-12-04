@@ -10,8 +10,8 @@ import jus.poc.prodcons._Producteur;
 
 
 
-//Threads producteurs
-public class Producteur extends Acteur implements _Producteur {
+
+public class Producteur extends Acteur implements _Producteur { //Threads producteurs
 
 	private ProdCons tampon; //tampon sur lequel on depose les messages
 	private int nbMessage; //nombre total de message que le producteur doit produire et deposer

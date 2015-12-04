@@ -12,8 +12,8 @@ import jus.poc.prodcons._Consommateur;
 
 
 
-// Threads consommateurs
-public class Consommateur extends Acteur implements _Consommateur {
+
+public class Consommateur extends Acteur implements _Consommateur { // Threads consommateurs
 
 	private ProdCons tampon; //tampon sur lequel on retire les messages
 	private int nbMessageRetire; //nombre de messages retires par le consommateur
@@ -33,12 +33,18 @@ public class Consommateur extends Acteur implements _Consommateur {
 	public Consommateur(Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.tampon = tampon;
-		//this.nbMessage = nbMessage;
 		this.nbMessageRetire = 0;
 		this.alea = alea;
 		this.impression = impression;
 	}
 	
+	/** Methode permetant de connaitre le nombre de message retire par le consommateur
+	 * 
+	 */
+	@Override
+	public int nombreDeMessages() {
+		return nbMessageRetire;
+	}
 
 	
 	/** Methode de recuperation et de traitement des messages par le consommateur
@@ -52,6 +58,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 			try {
 				//Le consommateur recupere le message depuis le tampon et l'affiche
 				Message msg = tampon.get(this);
+				nbMessageRetire++;
 				if (impression == 1){
 					System.out.println("Consommateur_Retrait : "+ super.identification() + " recupere "+msg);
 				}
@@ -65,22 +72,11 @@ public class Consommateur extends Acteur implements _Consommateur {
 				e.printStackTrace();
 			}
 		}
+		if (impression == 1){
+			System.out.println("STOP : Consommateur : "+ super.identification());
+		}
 
 
-	}
-	
-	
-	
-	
-	
-
-	
-
-	/** Methode permetant de connaitre le nombre de message retire par le consommateur
-	 * 
-	 */
-	public int nombreDeMessages() {
-		return nbMessageRetire;
 	}
 
 
