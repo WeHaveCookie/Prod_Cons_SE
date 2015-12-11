@@ -69,28 +69,41 @@ public class TestProdCons extends Simulateur {
 	protected void run() throws Exception{
 		this.init("src/jus/poc/prodcons/options/options1.xml");
 		ProdCons buffer = new ProdCons(nbBuffer, impression);
-		nbProdAlive = nbProd;
 		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
 		Aleatoire aleaTempsProd = new Aleatoire(tempsMoyenProduction, deviationTempsMoyenProduction);
 		Aleatoire aleaNbreAProduire = new Aleatoire(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
-	
-		while(this.nbProd>0) {
-			Producteur p = new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
+		nbProdAlive = nbProd;
+		Producteur[] p = new Producteur[nbProd];
+		Consommateur[] c = new Consommateur[nbCons];
+		
+		for(int i=0; i<nbProd; i++) { 
+			p[i]= new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
 			if(impression == 1){
-				System.out.println("Init : producteur : " + p.identification() + " -> NbrAProduire : " + p.GetNbMsg());
+				System.out.println("Init : producteur : " + p[i].identification() + " -> NbrAProduire : " + p[i].GetNbMsg());
 			}
-			p.start();
-			nbProd--;
+			p[i].start();
 		}
 				
-		while(this.nbCons>0) {
-			Consommateur c = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
+		for(int j=0; j<nbCons; j++) { 
+			c[j] = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
 			if(impression == 1){
-				System.out.println("Init : consommateur : " + c.identification());
+				System.out.println("Init : consommateur : " + c[j].identification());
 			}
-			c.start();
-			nbCons--;
+			c[j].start();
 		}
+		
+		
+		for(int i = 0; i < nbProd; i++){
+			p[i].join();
+		}
+		
+	
+		if(impression == 1){
+			System.out.println("SIMULATION TERMINEE");
+		}
+		System.exit(0);
+		
+	
 	}
 
 	
