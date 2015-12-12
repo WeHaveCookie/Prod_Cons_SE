@@ -5,14 +5,13 @@ import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Producteur;
-import jus.poc.prodcons.v1.TestProdCons;
+import jus.poc.prodcons.v4.TestProdCons;
 
 
 
-//Threads producteurs
-public class Producteur extends Acteur implements _Producteur {
+
+public class Producteur extends Acteur implements _Producteur { // Threads producteurs
 
 	private ProdCons tampon; //tampon sur lequel on depose les messages
 	private int nbMessage; //nombre total de message que le producteur doit produire et deposer
@@ -75,24 +74,19 @@ public class Producteur extends Acteur implements _Producteur {
 		{
 			try {
 				MessageX msg = new MessageX(identification(),nbMessageDepose, nbEx.next());
-				observateur.productionMessage(this, msg, alea.next()); //lorsqu'un producteur P produit un nouveau message M avec un délai de production de T
-				if(impression == 1){
-					System.out.println("Producteur_Depot : "+super.identification() + " depose " +msg + " - Exemplaires : " + msg.getNbMsgDepos());
-				}
 				tampon.put(this, msg);
 				nbMessageDepose++; 
+				observateur.productionMessage(this, msg,alea.next());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		if(impression == 1){
-			System.out.println("STOP : producteur : " + this.identification());
+			System.out.println("   ---------------------------  ");
+			System.out.println("   || STOP : producteur : " + this.identification() + " || ");
+			System.out.println("   ---------------------------  ");
 		}
-		TestProdCons.nbProdAlive--;
-		if(impression == 1){
-			System.out.println("Producteur_Alive : " + TestProdCons.nbProdAlive);
-			System.out.println("NbMsgBuffer : "+ tampon.enAttente());
-		}
+		
 
 	}
 

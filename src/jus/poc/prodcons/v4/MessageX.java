@@ -47,11 +47,8 @@ public class MessageX implements Message {
 	/** Methode permettant de savoir s'il reste des messages à consommer
 	 */
 	public boolean IsConso(){
-		return ((nbExDepos - nbExConso) == 0);
+		return ((nbExDepos-nbExConso) == 0);
 	}
-	
-	
-	
 	
 
 }
