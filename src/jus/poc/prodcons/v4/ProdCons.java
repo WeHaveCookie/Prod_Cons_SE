@@ -81,8 +81,9 @@ public class ProdCons implements Tampon {
 		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
 		buffer[in] = arg1;
 		in = (in + 1) % taille();
+		
 		nbCasePleine++;
-		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
+		mutexP.v(); // Debloque l'accès au buffer pour les producteurs
 		FileCons.v(); //Permet de notifier les consommateurs qu'un message à été déposé
 	}
 
@@ -96,7 +97,7 @@ public class ProdCons implements Tampon {
 		Message m = buffer[out];
 		out = (out + 1) % taille();
 		nbCasePleine--;
-		mutexC.v(); // Debloque l'accès au buffer
+		mutexC.v(); // Debloque l'accès au buffer pour les consommateurs
 		FileProd.v(); //Permet de notifier les producteurs qu'une case est libérée
 		return m;
 	}

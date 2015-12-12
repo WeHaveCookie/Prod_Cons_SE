@@ -5,14 +5,13 @@ import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Producteur;
-import jus.poc.prodcons.v1.TestProdCons;
+import jus.poc.prodcons.v2.TestProdCons;
 
 
 
-//Threads producteurs
-public class Producteur extends Acteur implements _Producteur {
+
+public class Producteur extends Acteur implements _Producteur { // Threads producteurs
 
 	private ProdCons tampon; //tampon sur lequel on depose les messages
 	private int nbMessage; //nombre total de message que le producteur doit produire et deposer
@@ -81,6 +80,7 @@ public class Producteur extends Acteur implements _Producteur {
 				if(impression == 1){
 					System.out.println("Producteur_Depot : "+super.identification() + " depose " +msg);
 				}
+				sleep(100*alea.next());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
