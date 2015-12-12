@@ -4,6 +4,8 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.v2.TestProdCons;
+import jus.poc.prodcons.v2.Producteur;
 
 public class ProdCons implements Tampon {
 
@@ -15,8 +17,6 @@ public class ProdCons implements Tampon {
 	
 	private Semaphore FileCons;
 	private Semaphore FileProd;
-	private Semaphore mutexP;
-	private Semaphore mutexC;
 
 	
 	/** Constructor ProdCons
@@ -32,8 +32,6 @@ public class ProdCons implements Tampon {
 		
 		FileCons = new Semaphore(0);
 		FileProd = new Semaphore(taille);
-		mutexP = new Semaphore(1);
-		mutexC = new Semaphore(1);
 	}
 
 	/** Nombre de messages en attente dans la memoire tampon (nombre de case pleinne dans le buffer)
@@ -78,12 +76,21 @@ public class ProdCons implements Tampon {
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		FileProd.p(); //File d'attente des producteurs
-		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
-		buffer[in] = arg1;
-		in = (in + 1) % taille();
-		
-		nbCasePleine++;
-		mutexP.v(); // Debloque l'accès au buffer pour les producteurs
+		synchronized(this){ 
+			buffer[in] = arg1;
+			in = (in + 1) % taille();
+			nbCasePleine++;
+			if(impression == 1){
+				System.out.println("Producteur_Depot : "+arg0.identification() + " depose " + arg1);
+			}
+			if(!((Producteur) arg0).verif()){
+				TestProdCons.nbProdAlive--;
+				if(impression == 1){
+					System.out.println("Producteur_Alive : " + TestProdCons.nbProdAlive);
+					System.out.println("NbMsgBuffer : "+ this.enAttente());
+				}
+			}
+		} 
 		FileCons.v(); //Permet de notifier les consommateurs qu'un message à été déposé
 	}
 
@@ -93,11 +100,15 @@ public class ProdCons implements Tampon {
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		FileCons.p(); //File d'attente des consommateurs
-		mutexC.p(); // Permet l'acces unique d'un consommateur au buffer
-		Message m = buffer[out];
-		out = (out + 1) % taille();
-		nbCasePleine--;
-		mutexC.v(); // Debloque l'accès au buffer pour les consommateurs
+		Message m;
+		synchronized(this){ 
+			m = buffer[out];
+			out = (out + 1) % taille();
+			nbCasePleine--;
+			if (impression == 1){
+				System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+			}
+		} 
 		FileProd.v(); //Permet de notifier les producteurs qu'une case est libérée
 		return m;
 	}

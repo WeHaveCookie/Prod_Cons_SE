@@ -72,14 +72,8 @@ public class Producteur extends Acteur implements _Producteur { // Threads produ
 		{
 			try {
 				Message msg = new MessageX(identification(),nbMessageDepose);
-				if(impression == 1){
-					System.out.println("Producteur_Creation : "+super.identification() + " produit " +msg);
-				}
 				tampon.put(this, msg);
 				nbMessageDepose++; 
-				if(impression == 1){
-					System.out.println("Producteur_Depot : "+super.identification() + " depose " +msg);
-				}
 				sleep(100*alea.next());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -88,11 +82,7 @@ public class Producteur extends Acteur implements _Producteur { // Threads produ
 		if(impression == 1){
 			System.out.println("STOP : producteur : " + this.identification());
 		}
-		TestProdCons.nbProdAlive--;
-		if(impression == 1){
-			System.out.println("Producteur_Alive : " + TestProdCons.nbProdAlive);
-			System.out.println("NbMsgBuffer : "+ tampon.enAttente());
-		}
+		
 
 	}
 

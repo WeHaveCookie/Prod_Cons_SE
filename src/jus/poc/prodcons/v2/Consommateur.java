@@ -60,13 +60,6 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 				//Le consommateur recupere le message depuis le tampon et l'affiche
 				Message msg = tampon.get(this);
 				nbMessageRetire++;
-				if (impression == 1){
-					System.out.println("Consommateur_Retrait : "+ super.identification() + " recupere "+msg);
-				}
-				//On incremente alors le nombre de message retire et on simule un delais de traitement
-				if (impression == 1){
-					System.out.println("Consommateur_Traitement : "+ super.identification() + " effectue le traitement sur "+msg);
-				}
 				sleep(100*alea.next());
 				
 			} catch (Exception e) {
