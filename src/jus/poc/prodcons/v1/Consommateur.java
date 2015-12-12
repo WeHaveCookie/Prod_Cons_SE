@@ -1,13 +1,10 @@
 package jus.poc.prodcons.v1;
 
-import java.util.Date;
-
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
-import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 
 

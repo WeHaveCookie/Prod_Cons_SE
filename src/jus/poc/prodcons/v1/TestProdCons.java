@@ -2,7 +2,6 @@ package jus.poc.prodcons.v1;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Properties;
@@ -10,9 +9,6 @@ import java.util.Properties;
 import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Simulateur;
-import jus.poc.prodcons.Tampon;
-import jus.poc.prodcons._Consommateur;
-import jus.poc.prodcons._Producteur;
 
 public class TestProdCons extends Simulateur {
 
