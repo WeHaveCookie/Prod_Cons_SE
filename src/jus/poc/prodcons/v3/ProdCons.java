@@ -5,6 +5,8 @@ import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.v3.TestProdCons;
+import jus.poc.prodcons.v3.Producteur;
 
 public class ProdCons implements Tampon {
 
@@ -13,12 +15,11 @@ public class ProdCons implements Tampon {
 	private int out; //indique l'indice de la premiere case pleinne du tableau (dans laquelle on peut recuperer un message)
 	private int nbCasePleine;
 	private int impression;
+	
 	public Observateur TheObservateur;
 	
 	private Semaphore FileCons;
 	private Semaphore FileProd;
-	private Semaphore mutexP;
-	private Semaphore mutexC;
 
 	
 	/** Constructor ProdCons
@@ -35,8 +36,6 @@ public class ProdCons implements Tampon {
 		
 		FileCons = new Semaphore(0);
 		FileProd = new Semaphore(taille);
-		mutexP = new Semaphore(1);
-		mutexC = new Semaphore(1);
 	}
 
 	/** Nombre de messages en attente dans la memoire tampon (nombre de case pleinne dans le buffer)
@@ -81,12 +80,22 @@ public class ProdCons implements Tampon {
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		FileProd.p(); //File d'attente des producteurs
-		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
-		buffer[in] = arg1;
-		TheObservateur.depotMessage(arg0, arg1); //lorsqu'un message M est déposé dans le tampon par le producteur P
-		in = (in + 1) % taille();
-		nbCasePleine++;
-		mutexP.p(); // Permet l'acces unique d'un consommateur au buffer
+		synchronized(this){ 
+			buffer[in] = arg1;
+			in = (in + 1) % taille();
+			nbCasePleine++;
+			TheObservateur.depotMessage(arg0, arg1);
+			if(impression == 1){
+				System.out.println("Producteur_Depot : "+arg0.identification() + " depose " + arg1);
+			}
+			if(!((Producteur) arg0).verif()){
+				TestProdCons.nbProdAlive--;
+				if(impression == 1){
+					System.out.println("Producteur_Alive : " + TestProdCons.nbProdAlive);
+					System.out.println("NbMsgBuffer : "+ this.enAttente());
+				}
+			}
+		} 
 		FileCons.v(); //Permet de notifier les consommateurs qu'un message à été déposé
 	}
 
@@ -96,12 +105,16 @@ public class ProdCons implements Tampon {
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		FileCons.p(); //File d'attente des consommateurs
-		mutexC.p(); // Permet l'acces unique d'un consommateur au buffer
-		Message m = buffer[out];
-		TheObservateur.retraitMessage(arg0, m); //lorsqu'un message M est retiré du tampon par le consommateur C
-		out = (out + 1) % taille();
-		nbCasePleine--;
-		mutexC.v(); // Debloque l'accès au buffer
+		Message m;
+		synchronized(this){ 
+			m = buffer[out];
+			out = (out + 1) % taille();
+			nbCasePleine--;
+			TheObservateur.retraitMessage(arg0, m);
+			if (impression == 1){
+				System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+			}
+		} 
 		FileProd.v(); //Permet de notifier les producteurs qu'une case est libérée
 		return m;
 	}

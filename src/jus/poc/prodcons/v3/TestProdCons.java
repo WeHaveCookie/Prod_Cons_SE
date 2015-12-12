@@ -51,9 +51,9 @@ public class TestProdCons extends Simulateur {
 		for(Map.Entry<Object,Object> entry : properties.entrySet()) {
 			key = (String)entry.getKey();
 			value = Integer.parseInt((String)entry.getValue());
-			//if(impression == 1){
-			//	System.out.println("Parser : " + key + " : " + value);
-			//}
+			if(impression == 1){
+				System.out.println("Parser : " + key + " : " + value);
+			}
 			Option.getDeclaredField(key).set(this,value);
 		}
 	}
@@ -71,42 +71,33 @@ public class TestProdCons extends Simulateur {
 		nbProdAlive = nbProd;
 		Producteur[] p = new Producteur[nbProd];
 		Consommateur[] c = new Consommateur[nbCons];
-
+		
 		try {
-			observateur.init(nbProd, nbCons, nbBuffer); //a l'initialisation du systeme pour indiquer la configuration d'execution
+			observateur.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e) {
 			e.printStackTrace();
 		}
 		
 		for(int i=0; i<nbProd; i++) { 
 			p[i]= new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
+			observateur.newProducteur(p[i]);
 			if(impression == 1){
 				System.out.println("Init : producteur : " + p[i].identification() + " -> NbrAProduire : " + p[i].GetNbMsg());
 			}
-			observateur.newProducteur(p[i]); //lorsqu'un nouveau producteur P est cree
 			p[i].start();
 		}
 				
 		for(int j=0; j<nbCons; j++) { 
 			c[j] = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
+			observateur.newConsommateur(c[j]);
 			if(impression == 1){
 				System.out.println("Init : consommateur : " + c[j].identification());
 			}
-			observateur.newConsommateur(c[j]); //lorsqu'un nouveau consommateur C est cree
 			c[j].start();
 		}
 		
-		
-		for(int i = 0; i < nbProd; i++){
-			p[i].join();
-		}
-		
-	
-		if(impression == 1){
-			System.out.println("SIMULATION TERMINEE");
-		}
-		System.exit(0);
-	}
+
+}
 
 
 	/** Main permettant d'executer le programme
