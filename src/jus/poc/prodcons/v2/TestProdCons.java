@@ -2,7 +2,6 @@ package jus.poc.prodcons.v2;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Properties;
@@ -10,9 +9,6 @@ import java.util.Properties;
 import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Simulateur;
-import jus.poc.prodcons.Tampon;
-import jus.poc.prodcons._Consommateur;
-import jus.poc.prodcons._Producteur;
 
 public class TestProdCons extends Simulateur {
 
@@ -54,9 +50,9 @@ public class TestProdCons extends Simulateur {
 		for(Map.Entry<Object,Object> entry : properties.entrySet()) {
 			key = (String)entry.getKey();
 			value = Integer.parseInt((String)entry.getValue());
-			//if(impression == 1){
-			//	System.out.println("Parser : " + key + " : " + value);
-			//}
+			if(impression == 1){
+				System.out.println("Parser : " + key + " : " + value);
+			}
 			Option.getDeclaredField(key).set(this,value);
 		}
 	}
@@ -67,32 +63,41 @@ public class TestProdCons extends Simulateur {
 	@Override
 	protected void run() throws Exception{
 		this.init("src/jus/poc/prodcons/options/options1.xml");
-		nbProdAlive = nbProd;
 		ProdCons buffer = new ProdCons(nbBuffer, impression);
-		int i=0;
 		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
 		Aleatoire aleaTempsProd = new Aleatoire(tempsMoyenProduction, deviationTempsMoyenProduction);
 		Aleatoire aleaNbreAProduire = new Aleatoire(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
-
-		while(this.nbProd>0) {
-			Producteur p = new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
+		nbProdAlive = nbProd;
+		Producteur[] p = new Producteur[nbProd];
+		Consommateur[] c = new Consommateur[nbCons];
+		
+		for(int i=0; i<nbProd; i++) { 
+			p[i]= new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
 			if(impression == 1){
-				System.out.println("Init : producteur : " + p.identification() + " -> NbrAProduire : " + p.GetNbMsg());
+				System.out.println("Init : producteur : " + p[i].identification() + " -> NbrAProduire : " + p[i].GetNbMsg());
 			}
-			p.start();
-			this.nbProd--;
+			p[i].start();
+		}
+				
+		for(int j=0; j<nbCons; j++) { 
+			c[j] = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
+			if(impression == 1){
+				System.out.println("Init : consommateur : " + c[j].identification());
+			}
+			c[j].start();
 		}
 		
-		while(this.nbCons>0) {
-			Consommateur c = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
-			if(impression == 1){
-				System.out.println("Init : consommateur : " + c.identification());
-			}
-			c.start();
-			this.nbCons--;
+		
+		for(int i = 0; i < nbProd; i++){
+			p[i].join();
 		}
-
-	}
+		
+	
+		if(impression == 1){
+			System.out.println("SIMULATION TERMINEE");
+		}
+		System.exit(0);
+}
 
 
 	/** Main permettant d'executer le programme
