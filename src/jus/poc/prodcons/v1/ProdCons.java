@@ -4,6 +4,8 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.v1.Producteur;
+import jus.poc.prodcons.v1.TestProdCons;
 
 public class ProdCons implements Tampon {
 
@@ -66,6 +68,16 @@ public class ProdCons implements Tampon {
 		buffer[in] = arg1;
 		in = (in + 1) % taille();
 		nbCasePleine++;
+		if(impression == 1){
+			System.out.println("Producteur_Depot : "+ arg0.identification() + " depose " + arg1);
+		}
+		if(!((Producteur) arg0).verif()){
+			TestProdCons.nbProdAlive--;
+			if(impression == 1){
+				System.out.println("Producteur_Alive : " + TestProdCons.nbProdAlive);
+				System.out.println("NbMsgBuffer : "+ this.enAttente());
+			}
+		}
 		notifyAll();  //Notification a tous les threads
 	}
 
@@ -82,6 +94,9 @@ public class ProdCons implements Tampon {
 		Message m = buffer[out];
 		out = (out + 1) % taille();
 		nbCasePleine--;
+		if (impression == 1){
+			System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+		}
 		notifyAll(); //Notification à tous les threads
 		return m;
 	}

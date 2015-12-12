@@ -87,18 +87,6 @@ public class TestProdCons extends Simulateur {
 			}
 			c[j].start();
 		}
-		
-		
-		for(int i = 0; i < nbProd; i++){
-			p[i].join();
-		}
-		
-	
-		if(impression == 1){
-			System.out.println("SIMULATION TERMINEE");
-		}
-		System.exit(0);
-		
 	
 	}
 
