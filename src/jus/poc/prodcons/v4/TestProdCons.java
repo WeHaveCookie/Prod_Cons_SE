@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import jus.poc.prodcons.Aleatoire;
+import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Simulateur;
 
@@ -50,9 +51,6 @@ public class TestProdCons extends Simulateur {
 		for(Map.Entry<Object,Object> entry : properties.entrySet()) {
 			key = (String)entry.getKey();
 			value = Integer.parseInt((String)entry.getValue());
-			if(impression == 1){
-				System.out.println("Parser : " + key + " : " + value);
-			}
 			Option.getDeclaredField(key).set(this,value);
 		}
 	}
@@ -63,19 +61,27 @@ public class TestProdCons extends Simulateur {
 	@Override
 	protected void run() throws Exception{
 		this.init("src/jus/poc/prodcons/options/options1.xml");
-		ProdCons buffer = new ProdCons(nbBuffer, impression);
+		ProdCons buffer = new ProdCons(nbBuffer, observateur, impression);
 		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
 		Aleatoire aleaTempsProd = new Aleatoire(tempsMoyenProduction, deviationTempsMoyenProduction);
 		Aleatoire aleaNbreAProduire = new Aleatoire(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
+		Aleatoire aleaNbEx = new Aleatoire(nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
 		nbProdAlive = nbProd;
 		Producteur[] p = new Producteur[nbProd];
 		Consommateur[] c = new Consommateur[nbCons];
+
+		try {
+			observateur.init(nbProd, nbCons, nbBuffer); //a l'initialisation du systeme pour indiquer la configuration d'execution
+		} catch (ControlException e) {
+			e.printStackTrace();
+		}
 		
 		for(int i=0; i<nbProd; i++) { 
-			p[i]= new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
+			p[i]= new Producteur(observateur, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), aleaNbEx, buffer, aleaTempsProd, impression);
 			if(impression == 1){
 				System.out.println("Init : producteur : " + p[i].identification() + " -> NbrAProduire : " + p[i].GetNbMsg());
 			}
+			observateur.newProducteur(p[i]); //lorsqu'un nouveau producteur P est cree
 			p[i].start();
 		}
 				
@@ -84,6 +90,7 @@ public class TestProdCons extends Simulateur {
 			if(impression == 1){
 				System.out.println("Init : consommateur : " + c[j].identification());
 			}
+			observateur.newConsommateur(c[j]); //lorsqu'un nouveau consommateur C est cree
 			c[j].start();
 		}
 		
@@ -97,7 +104,7 @@ public class TestProdCons extends Simulateur {
 			System.out.println("SIMULATION TERMINEE");
 		}
 		System.exit(0);
-}
+	}
 
 
 	/** Main permettant d'executer le programme

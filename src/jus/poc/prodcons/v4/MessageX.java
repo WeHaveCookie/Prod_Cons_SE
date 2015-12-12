@@ -9,10 +9,15 @@ public class MessageX implements Message {
 	private int nbExDepos; //nombre d'examplaires du message deposé
 	private int nbExConso; //nombre d'exemplaires du message consommé à l'instant t
 
-	public MessageX(int idProd, int numMsg, int nbMsgDepos) {
+	/** Constructeur de MessagesX
+	 * @param idProd : indice du producteur deposant le message
+	 * @param numMsg : indice du message deposé
+	 * @param nbExDepos : nombre d'exemplaire du message deposé
+	 */
+	public MessageX(int idProd, int numMsg, int nbExDepos) {
 		this.idProd = idProd;
 		this.idMsg = numMsg;
-		this. nbExDepos = nbMsgDepos;
+		this. nbExDepos = nbExDepos;
 		this.nbExConso = 0;
 	}
 
@@ -23,13 +28,13 @@ public class MessageX implements Message {
 
 	/** Getteur du nombre d'exemplaires consommés
 	 */
-	protected int getNbConso() {
+	public int getNbConso() {
 		return nbExConso;
 	}
 
 	/** Getteur du nombre d'exemplaire du message initialement déposé
 	 */
-	protected int getNbMsgDepos() {
+	public int getNbMsgDepos() {
 		return nbExDepos;
 	}
 

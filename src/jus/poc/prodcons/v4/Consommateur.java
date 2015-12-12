@@ -1,13 +1,15 @@
 package jus.poc.prodcons.v4;
 
+import java.util.Date;
 
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
+import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
-import jus.poc.prodcons.v2.TestProdCons;
+import jus.poc.prodcons.v1.TestProdCons;
 
 
 
@@ -58,16 +60,12 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 		{
 			try {
 				//Le consommateur recupere le message depuis le tampon et l'affiche
-				Message msg = tampon.get(this);
+				MessageX msg = (MessageX) tampon.get(this);
 				nbMessageRetire++;
 				if (impression == 1){
-					System.out.println("Consommateur_Retrait : "+ super.identification() + " recupere "+msg);
+					System.out.println("Consommateur_Retrait : "+ super.identification() + " recupere "+ msg + " - NbExConso : " + msg.getNbConso());
 				}
-				//On incremente alors le nombre de message retire et on simule un delais de traitement
-				if (impression == 1){
-					System.out.println("Consommateur_Traitement : "+ super.identification() + " effectue le traitement sur "+msg);
-				}
-				sleep(100*alea.next());
+				observateur.consommationMessage(this, msg, alea.next()); //lorsqu'un consommateur C consomme un message M avec un délai de T
 				
 			} catch (Exception e) {
 				e.printStackTrace();

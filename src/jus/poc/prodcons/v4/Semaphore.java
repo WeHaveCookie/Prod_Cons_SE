@@ -16,8 +16,8 @@ public class Semaphore {
 	{
 		while(residu<=0){
 			wait();
+			residu--;
 		}
-		residu--;
 	}
 
 	
