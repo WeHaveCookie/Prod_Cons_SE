@@ -34,13 +34,13 @@ public class MessageX implements Message {
 
 	/** Getteur du nombre d'exemplaire du message initialement déposé
 	 */
-	public int getNbMsgDepos() {
+	public int getNbExDepos() {
 		return nbExDepos;
 	}
 
 	/** Methode permettant de consommer un exemplaire du message
 	 */
-	public void ConsommerMsg(){
+	public void ConsommerEx(){
 		nbExConso++;
 	}
 

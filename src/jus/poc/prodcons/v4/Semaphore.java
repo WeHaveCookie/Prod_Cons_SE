@@ -23,12 +23,11 @@ public class Semaphore {
 	
 	/** Methode REVEILLER
 	 */
-	public synchronized void v()
+	public synchronized void v(int n)
 	{
-		residu++;
+		residu=residu+n;
 		notify();
 	}
 
-
-
+	
 }
