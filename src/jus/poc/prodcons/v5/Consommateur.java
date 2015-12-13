@@ -59,9 +59,10 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 			try {
 				//Le consommateur recupere le message depuis le tampon et l'affiche
 				Message msg = tampon.get(this);
-				nbMessageRetire++;
-				observateur.consommationMessage(this, msg, alea.next());
-				
+				if(msg != null) {
+					nbMessageRetire++;
+					observateur.consommationMessage(this, msg, alea.next());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

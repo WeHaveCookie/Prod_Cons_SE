@@ -118,19 +118,27 @@ public class ProdCons implements Tampon {
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		lock.lock();
-		Message m;
+		Message m = null;
 		try {
 			while(isVide()) {
+				if(enAttente() == 0) {
+					break;
+				}
 				FileCons.await();
 			}
-			m = buffer[out];
-			out = (out + 1) % taille();
-			nbCasePleine--;
-			TheObservateur.retraitMessage(arg0, m);
-			if (impression == 1){
-				System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+			if(enAttente() != 0) {
+				m = buffer[out];
+				out = (out + 1) % taille();
+				nbCasePleine--;
+				TheObservateur.retraitMessage(arg0, m);
+				if (impression == 1){
+					System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+				}
+				FileProd.signal();
 			}
-			FileProd.signal();
+			if(TestProdCons.nbProdAlive == 0) {
+				FileCons.signal();
+			}
 		} finally {
 			lock.unlock();
 		}

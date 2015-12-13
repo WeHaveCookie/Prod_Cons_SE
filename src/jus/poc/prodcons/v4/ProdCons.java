@@ -120,30 +120,33 @@ public class ProdCons implements Tampon {
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		
 		ExemplaireCons.p(); // Tant qu'il n'y a aucun exemplaire à retirer, les consommateurs attendent
-		MessageX m;
-		
-		synchronized(this){ 
-			m = (MessageX) buffer[out];
-			m.ConsommerEx(); // Consommation d'un exemplaire du message
-			if (impression == 1){
-				System.out.println("Consommateur_Retrait : " + arg0.identification() + " retire " + m + " - NbExemplaireConso " + m.getNbConso());
-			}
-		}
-			
-		if(m.IsConso()){ // Si tous les exemplaires ont été consommés, on retire le message du buffer
-			
-			synchronized(this){ 
-				out = (out + 1) % taille();
-				TheObservateur.retraitMessage(arg0, m);
-				nbCasePleine--;
+		MessageX m = null;
+		synchronized(this){
+			if (enAttente() != 0 ){
+				m = (MessageX) buffer[out];
+				m.ConsommerEx(); // Consommation d'un exemplaire du message
 				if (impression == 1){
-					System.out.println("   ----------------------------------------------------------  ");
-					System.out.println("   || Detruction du message : "+ m + " || ");
-					System.out.println("   ----------------------------------------------------------  ");
+					System.out.println("Consommateur_Retrait : " + arg0.identification() + " retire " + m + " - NbExemplaireConso " + m.getNbConso() + " NbExemp : " + m.getNbExDepos());
+				}
+				
+				if(m.IsConso()){ // Si tous les exemplaires ont été consommés, on retire le message du buffer
+					
+						out = (out + 1) % taille();
+						TheObservateur.retraitMessage(arg0, m);
+						nbCasePleine--;
+						if (impression == 1){
+							System.out.println("   ----------------------------------------------------------  ");
+							System.out.println("   || Detruction du message : "+ m + " || ");
+							System.out.println("   ----------------------------------------------------------  ");
+						}
+					FileProd.v(1); //Notifie les producteur qu'une nouvelle place est dispo dans le buffer
+					ExemplaireProd.v(1); //Debloque le producteur bloque car tous les exemplaires ont été lu
 				}
 			}
-			FileProd.v(1); //Notifie les producteur qu'une nouvelle place est dispo dans le buffer
-			ExemplaireProd.v(1); //Debloque le producteur bloque car tous les exemplaires ont été lu
+		}
+		
+		if(TestProdCons.nbProdAlive == 0) {
+			ExemplaireCons.v(1);
 		}
 		return m;
 	}

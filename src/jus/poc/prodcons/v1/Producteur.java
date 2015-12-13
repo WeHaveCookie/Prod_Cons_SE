@@ -61,7 +61,7 @@ public class Producteur extends Acteur implements _Producteur { //Threads produc
 	}
 	
 	
-	/** Méthode permettant de produire un message et de le deposer dans la memoire tampon
+	/** MeÌ�thode permettant de produire un message et de le deposer dans la memoire tampon
 	 * 
 	 */
 	public void run()
@@ -81,7 +81,6 @@ public class Producteur extends Acteur implements _Producteur { //Threads produc
 		if(impression == 1){
 			System.out.println("STOP : producteur : " + this.identification());
 		}
-		
 	}
 
 

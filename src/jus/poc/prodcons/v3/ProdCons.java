@@ -105,16 +105,21 @@ public class ProdCons implements Tampon {
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		FileCons.p(); //File d'attente des consommateurs
-		Message m;
-		synchronized(this){ 
-			m = buffer[out];
-			out = (out + 1) % taille();
-			nbCasePleine--;
-			TheObservateur.retraitMessage(arg0, m);
-			if (impression == 1){
-				System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+		Message m = null;
+		if(enAttente() !=0 ){
+			synchronized(this){ 
+				m = buffer[out];
+				out = (out + 1) % taille();
+				nbCasePleine--;
+				TheObservateur.retraitMessage(arg0, m);
+				if (impression == 1){
+					System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+				}
 			}
-		} 
+		}
+		if(TestProdCons.nbProdAlive == 0) {
+			FileCons.v();
+		}
 		FileProd.v(); //Permet de notifier les producteurs qu'une case est libérée
 		return m;
 	}

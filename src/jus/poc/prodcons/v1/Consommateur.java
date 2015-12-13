@@ -52,6 +52,7 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 		
 		while(TestProdCons.nbProdAlive > 0 || !tampon.isVide())
 		{
+			
 			try {
 				//Le consommateur recupere le message depuis le tampon et l'affiche
 				Message msg = tampon.get(this);
