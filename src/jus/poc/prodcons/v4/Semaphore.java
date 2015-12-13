@@ -15,7 +15,13 @@ public class Semaphore {
 	public synchronized void p() throws InterruptedException
 	{
 		while(residu<=0){
-			wait();
+			try{
+				wait();
+			}
+			catch(InterruptedException e) {
+				System.out.println("Erreur de sémaphore");
+			}
+			
 		}
 		residu--;
 	}
