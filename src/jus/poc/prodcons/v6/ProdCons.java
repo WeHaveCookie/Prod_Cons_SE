@@ -28,7 +28,7 @@ public class ProdCons implements Tampon {
 	 * @param taille : taille de la memoire tampon
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 */
-	public ProdCons(int taille, Observateur obs, int impression) {
+	public ProdCons(int taille, Observateur obs, Observation _obs, int impression) {
 		this.buffer = new Message[taille];
 		this.impression = impression;
 		this.in = 0;
@@ -37,7 +37,7 @@ public class ProdCons implements Tampon {
 		this.TheObservateur = obs;
 		FileCons = new Semaphore(0);
 		FileProd = new Semaphore(taille);
-		m_obs = new Observation();
+		m_obs = _obs;
 	}
 
 	/** Nombre de messages en attente dans la memoire tampon (nombre de case pleinne dans le buffer)
@@ -81,14 +81,16 @@ public class ProdCons implements Tampon {
 	 */
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
-		m_obs.addToQueue(arg0);
+		//m_obs.addToQueue(arg0);
 		FileProd.p(); //File d'attente des producteurs
 		synchronized(this){ 
 			buffer[in] = arg1;
 			in = (in + 1) % taille();
 			nbCasePleine++;
 			TheObservateur.depotMessage(arg0, arg1);
-			//m_obs.serve();
+			// OBS //
+			m_obs.depotMessage(arg0, arg1);
+			/////////
 			if(impression == 1){
 				System.out.println("Producteur_Depot : "+arg0.identification() + " depose " + arg1);
 			}
@@ -108,7 +110,7 @@ public class ProdCons implements Tampon {
 	 */
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
-		m_obs.addToQueue(arg0); 
+		//m_obs.addToQueue(arg0); 
 		FileCons.p(); //File d'attente des consommateurs
 		Message m = null;
 		if(enAttente() !=0 ){
@@ -117,7 +119,9 @@ public class ProdCons implements Tampon {
 				out = (out + 1) % taille();
 				nbCasePleine--;
 				TheObservateur.retraitMessage(arg0, m);
-				//m_obs.serve();
+				// Obs //
+				m_obs.retraitMessage(arg0, m);
+				/////////
 				if (impression == 1){
 					System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
 				}
@@ -129,9 +133,4 @@ public class ProdCons implements Tampon {
 		FileProd.v(); //Permet de notifier les producteurs qu'une case est libérée
 		return m;
 	}
-	
-	public void finalize(){
-		System.out.println("Model coherent : " + TheObservateur.coherent());
-	}
-	
 }

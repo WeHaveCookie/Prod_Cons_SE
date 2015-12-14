@@ -30,13 +30,14 @@ public class Producteur extends Acteur implements _Producteur { // Threads produ
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 * @throws ControlException
 	 */
-	public Producteur(Observateur observateur, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, int nbMessage, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
+	public Producteur(Observateur observateur, Observation obs, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, int nbMessage, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.tampon = tampon;
 		this.nbMessageDepose = 0;
 		this.nbMessage = nbMessage;
 		this.alea = alea;
 		this.impression = impression;
+		obs.initProd(this.identification(), this.nbMessage);
 	}
 	
 	
