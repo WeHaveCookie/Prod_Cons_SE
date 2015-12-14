@@ -87,15 +87,17 @@ public class ProdCons implements Tampon {
 	@Override
 	public synchronized Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		//Tant que le tampon est vide, on attend puisque l'on ne peut rien recuperer
-		while(isVide()) {
+		while(isVide() && TestProdCons.nbProdAlive != 0) {
 			wait();
 		}
-		//Si le tampon n'est pas vide, on recupere le premier message du tableau, et on met a jours l'indice out
 		Message m = buffer[out];
-		out = (out + 1) % taille();
-		nbCasePleine--;
-		if (impression == 1){
-			System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+		if(enAttente() != 0) {
+			//Si le tampon n'est pas vide, on recupere le premier message du tableau, et on met a jours l'indice out
+			out = (out + 1) % taille();
+			nbCasePleine--;
+			if (impression == 1){
+				System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
+			}
 		}
 		notifyAll(); //Notification à tous les threads
 		return m;

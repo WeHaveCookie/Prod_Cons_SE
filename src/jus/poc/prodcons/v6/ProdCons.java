@@ -81,7 +81,7 @@ public class ProdCons implements Tampon {
 	 */
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
-		//m_obs.addToQueue(arg0);
+		m_obs.addToQueue(arg0);
 		FileProd.p(); //File d'attente des producteurs
 		synchronized(this){ 
 			buffer[in] = arg1;
@@ -108,7 +108,7 @@ public class ProdCons implements Tampon {
 	 */
 	@Override
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
-		//m_obs.addToQueue(arg0); 
+		m_obs.addToQueue(arg0); 
 		FileCons.p(); //File d'attente des consommateurs
 		Message m = null;
 		if(enAttente() !=0 ){
