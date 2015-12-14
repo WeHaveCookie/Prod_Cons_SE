@@ -63,7 +63,8 @@ public class TestProdCons extends Simulateur {
 	protected void run() throws Exception{
 		this.init("src/jus/poc/prodcons/options/options1.xml");
 		Observation obs = new Observation();
-		ProdCons buffer = new ProdCons(nbBuffer, observateur, obs, impression);
+		ObservateurV2 m_observator = new ObservateurV2();
+		ProdCons buffer = new ProdCons(nbBuffer, observateur, m_observator, impression);
 		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
 		Aleatoire aleaTempsProd = new Aleatoire(tempsMoyenProduction, deviationTempsMoyenProduction);
 		Aleatoire aleaNbreAProduire = new Aleatoire(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
@@ -72,13 +73,15 @@ public class TestProdCons extends Simulateur {
 		Consommateur[] c = new Consommateur[nbCons];
 		
 		try {
+			m_observator.init(nbProd, nbCons, nbBuffer);
 			observateur.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e) {
 			e.printStackTrace();
 		}
 		
 		for(int i=0; i<nbProd; i++) { 
-			p[i]= new Producteur(observateur, obs, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
+			p[i]= new Producteur(observateur, m_observator, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
+			m_observator.newProducteur(p[i]);
 			observateur.newProducteur(p[i]);
 			if(impression == 1){
 				System.out.println("Init : producteur : " + p[i].identification() + " -> NbrAProduire : " + p[i].GetNbMsg());
@@ -87,7 +90,8 @@ public class TestProdCons extends Simulateur {
 		}
 				
 		for(int j=0; j<nbCons; j++) { 
-			c[j] = new Consommateur(observateur, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
+			c[j] = new Consommateur(observateur, m_observator, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
+			m_observator.newConsommateur(c[j]);
 			observateur.newConsommateur(c[j]);
 			if(impression == 1){
 				System.out.println("Init : consommateur : " + c[j].identification());
@@ -102,18 +106,19 @@ public class TestProdCons extends Simulateur {
 			c[j].join();
 		}
 		System.out.println("Fin Simulation");
-		if(obs.isCoherent(false)) {
+		if(m_observator.isCoherent(false)) {
 			System.out.println("La simulation est cohérente");
 		} else {
 			System.out.println("La simulation n'est pas cohérente");
-			obs.isCoherent(true);
+			m_observator.isCoherent(true);
 		}
-		if(obs.famine(false)) {
+		if(m_observator.isFamine(false)) {
 			System.out.println("La simulation comporte de la famine");
-			obs.famine(true);
+			m_observator.isFamine(true);
 		} else {
 			System.out.println("La simaltion ne comporte pas de famine");
 		}
+		m_observator.displayConsommateur();
 }
 
 
