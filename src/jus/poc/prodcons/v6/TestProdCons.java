@@ -15,8 +15,8 @@ public class TestProdCons extends Simulateur {
 
 	public static int nbProdAlive;
 	
-	public static int nbProd;
-	public static int nbCons;
+	public int nbProd;
+	public int nbCons;
 	public int nbBuffer;
 	public int tempsMoyenProduction;
 	public int deviationTempsMoyenProduction;
@@ -61,9 +61,18 @@ public class TestProdCons extends Simulateur {
 	 */
 	@Override
 	protected void run() throws Exception{
-		this.init("src/jus/poc/prodcons/options/options1.xml");
-		Observation obs = new Observation();
-		ObservateurV2 m_observator = new ObservateurV2();
+		//this.init("src/jus/poc/prodcons/options/options1.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsDevia1.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsDevia2.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsDevia3.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsDevia4.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsMultiBuff.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsNoBuffer.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsNoCons.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsNoProd.xml");
+		//this.init("src/jus/poc/prodcons/options/optionsOverload.xml");
+		this.init("src/jus/poc/prodcons/options/optionsTpsProd0.xml");
+		Observator m_observator = new Observator();
 		ProdCons buffer = new ProdCons(nbBuffer, observateur, m_observator, impression);
 		Aleatoire aleaCons = new Aleatoire(tempsMoyenConsommation,deviationTempsMoyenConsommation);
 		Aleatoire aleaTempsProd = new Aleatoire(tempsMoyenProduction, deviationTempsMoyenProduction);
@@ -74,15 +83,14 @@ public class TestProdCons extends Simulateur {
 		
 		try {
 			m_observator.init(nbProd, nbCons, nbBuffer);
-			observateur.init(nbProd, nbCons, nbBuffer);
+			//observateur.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e) {
 			e.printStackTrace();
 		}
-		
 		for(int i=0; i<nbProd; i++) { 
 			p[i]= new Producteur(observateur, m_observator, tempsMoyenProduction, deviationTempsMoyenProduction, aleaNbreAProduire.next(), buffer, aleaTempsProd, impression);
 			m_observator.newProducteur(p[i]);
-			observateur.newProducteur(p[i]);
+			//observateur.newProducteur(p[i]);
 			if(impression == 1){
 				System.out.println("Init : producteur : " + p[i].identification() + " -> NbrAProduire : " + p[i].GetNbMsg());
 			}
@@ -92,7 +100,7 @@ public class TestProdCons extends Simulateur {
 		for(int j=0; j<nbCons; j++) { 
 			c[j] = new Consommateur(observateur, m_observator, tempsMoyenConsommation, deviationTempsMoyenConsommation, buffer, aleaCons, impression);
 			m_observator.newConsommateur(c[j]);
-			observateur.newConsommateur(c[j]);
+			//observateur.newConsommateur(c[j]);
 			if(impression == 1){
 				System.out.println("Init : consommateur : " + c[j].identification());
 			}
@@ -116,9 +124,9 @@ public class TestProdCons extends Simulateur {
 			System.out.println("La simulation comporte de la famine");
 			m_observator.isFamine(true);
 		} else {
-			System.out.println("La simaltion ne comporte pas de famine");
+			System.out.println("La simulation ne comporte pas de famine");
 		}
-		m_observator.displayConsommateur();
+		//m_observator.displayConsommateur();
 }
 
 

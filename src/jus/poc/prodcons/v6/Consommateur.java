@@ -18,7 +18,7 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 	private int nbMessageRetire; //nombre de messages retires par le consommateur
 	private Aleatoire alea; //variable aleatoire permettant de simuler un delais de traitement
 	private int impression; // Permet d'inhiber les System.out.println produit par le programme
-	private ObservateurV2 m_observator;
+	public Observator m_observator;
 
 	
 	/** Constructor Consommateur
@@ -30,7 +30,7 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 * @throws ControlException
 	 */
-	public Consommateur(Observateur observateur, ObservateurV2 observator, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
+	public Consommateur(Observateur observateur, Observator observator, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.tampon = tampon;
 		//this.nbMessage = nbMessage;
@@ -64,7 +64,7 @@ public class Consommateur extends Acteur implements _Consommateur { // Threads c
 				if (msg != null) {
 					nbMessageRetire++;
 					m_observator.consommationMessage(this, msg, alea.next());
-					observateur.consommationMessage(this, msg, alea.next());
+					//observateur.consommationMessage(this, msg, alea.next());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

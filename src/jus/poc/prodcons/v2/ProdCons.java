@@ -101,8 +101,8 @@ public class ProdCons implements Tampon {
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		FileCons.p(); //File d'attente des consommateurs
 		Message m = null;
-		if(enAttente()!=0){
-			synchronized(this){ 
+		synchronized(this){
+			if(enAttente()!=0){
 				m = buffer[out];
 				out = (out + 1) % taille();
 				nbCasePleine--;

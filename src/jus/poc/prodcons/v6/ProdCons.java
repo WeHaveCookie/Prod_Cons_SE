@@ -16,7 +16,7 @@ public class ProdCons implements Tampon {
 	private int out; //indique l'indice de la premiere case pleinne du tableau (dans laquelle on peut recuperer un message)
 	private int nbCasePleine;
 	private int impression;
-	private ObservateurV2 m_observator;
+	public Observator m_observator;
 	public Observateur TheObservateur;
 	
 	private Semaphore FileCons;
@@ -27,7 +27,7 @@ public class ProdCons implements Tampon {
 	 * @param taille : taille de la memoire tampon
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 */
-	public ProdCons(int taille, Observateur obs, ObservateurV2 observator, int impression) {
+	public ProdCons(int taille, Observateur obs, Observator observator, int impression) {
 		this.buffer = new Message[taille];
 		this.impression = impression;
 		this.in = 0;
@@ -86,7 +86,7 @@ public class ProdCons implements Tampon {
 			in = (in + 1) % taille();
 			nbCasePleine++;
 			m_observator.depotMessage(arg0, arg1);
-			TheObservateur.depotMessage(arg0, arg1);
+			//TheObservateur.depotMessage(arg0, arg1);
 			if(impression == 1){
 				System.out.println("Producteur_Depot : "+arg0.identification() + " depose " + arg1);
 			}
@@ -108,13 +108,13 @@ public class ProdCons implements Tampon {
 	public Message get(_Consommateur arg0) throws Exception,InterruptedException {
 		FileCons.p(); //File d'attente des consommateurs
 		Message m = null;
-		if(enAttente() !=0 ){
-			synchronized(this){ 
+		synchronized(this){
+			if(enAttente() != 0){ 
 				m = buffer[out];
 				out = (out + 1) % taille();
 				nbCasePleine--;
 				m_observator.retraitMessage(arg0, m);
-				TheObservateur.retraitMessage(arg0, m);
+				//TheObservateur.retraitMessage(arg0, m);
 				if (impression == 1){
 					System.out.println("Consommateur_Retrait : "+ arg0.identification() + " recupere "+ m);
 				}

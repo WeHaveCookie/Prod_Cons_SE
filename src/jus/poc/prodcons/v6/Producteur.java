@@ -18,7 +18,7 @@ public class Producteur extends Acteur implements _Producteur { // Threads produ
 	private int nbMessageDepose; //nombre de message que le producteur a deja depose
 	private Aleatoire alea; //variable aleatoire permettant de simuler un delais de traitement
 	private int impression; // Permet d'inhiber les System.out.println produit par le programme
-	private ObservateurV2 m_observator;
+	public Observator m_observator;
 	
 	/** Constructor Producteur
 	 * @param observateur : 
@@ -30,11 +30,14 @@ public class Producteur extends Acteur implements _Producteur { // Threads produ
 	 * @param impression : permet d'inhiber les System.out.println produit par le programme s'il vaut 1
 	 * @throws ControlException
 	 */
-	public Producteur(Observateur observateur, ObservateurV2 observator, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, int nbMessage, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
+	public Producteur(Observateur observateur, Observator observator, int moyenneTempsDeTraitement, int deviationTempsDeTraitement, int nbMessage, ProdCons tampon, Aleatoire alea, int impression) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.tampon = tampon;
 		this.nbMessageDepose = 0;
 		this.nbMessage = nbMessage;
+		if(nbMessage == 0) { // Mort nait
+			TestProdCons.nbProdAlive--;
+		}
 		this.alea = alea;
 		this.impression = impression;
 		m_observator = observator;
@@ -77,7 +80,7 @@ public class Producteur extends Acteur implements _Producteur { // Threads produ
 				m_observator.productionMessage(this, msg, alea.next());
 				tampon.put(this, msg);
 				nbMessageDepose++; 
-				observateur.productionMessage(this, msg,alea.next());
+				//observateur.productionMessage(this, msg,alea.next());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
