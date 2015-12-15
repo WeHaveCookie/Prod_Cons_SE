@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>
-Cette configuration est destinée à la version 1 : le flag impression peut être mis à 0 pour inhiber les impressions réalisées par le programme.
+But : Test en situation d'Overload
 </comment>
  <entry key="nbProd">800</entry>
  <entry key="nbCons">1500</entry>

@@ -2,10 +2,10 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <comment>
-Cette configuration est destinée à la version 1 : le flag impression peut être mis à 0 pour inhiber les impressions réalisées par le programme.
+But : Test avec un grand buffer et peu de consommateur, permettant de vérifier que lorsque les threads producteurs sont morts, les threads consommateurs continuent de vider le buffer avant de mourir.
 </comment>
  <entry key="nbProd">10</entry>
- <entry key="nbCons">50</entry>
+ <entry key="nbCons">5</entry>
  <entry key="nbBuffer">30</entry>
  <entry key="tempsMoyenProduction">10</entry>
  <entry key="deviationTempsMoyenProduction">1</entry>
